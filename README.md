@@ -8,7 +8,7 @@ This kv2 can then be played with the bundled player inside Computercraft.
 
 the 60 byte header goes as:
 -----------------------------
-width and height of frame; 2 bytes
+width and height of frame; 2 bytes\n
 file type; 1 byte
 is video?; 1 byte (0=false,1=true)
 if video, what framerate?; 1 byte which represents a fixed-point number with a precision of a tenth (max is 20fps, but for demo purposes: 255=25.5fps)
