@@ -25,15 +25,15 @@ types go as follows:
 each byte represents the string.char() number needed for that special character, with amounts higher than 159 representing a char with inverted colors<br />
 Example type 1 lua code:<br />
 if byte >= 160 then<br />
-­  if monitor.getBackgroundColor()==32768 then<br />
-­    monitor.setBackgroundColor(1)<br />
-­    monitor.setTextColor(32768)<br />
-­  end<br />
-­  monitor.write(string.char(160-(byte-159))) this is the relationship between the byte and the inverted char<br />
+­  ­if monitor.getBackgroundColor()==32768 then<br />
+­    ­monitor.setBackgroundColor(1)<br />
+­    ­monitor.setTextColor(32768)<br />
+­  ­end<br />
+­  ­monitor.write(string.char(160-(byte-159))) this is the relationship between the byte and the inverted char<br />
 else<br />
-­  if monitor.getBackgroundColor()==1 then<br />
-­    monitor.setBackgroundColor(32768)<br />
-­    monitor.setTextColor(1)<br />
+­  ­if monitor.getBackgroundColor()==1 then<br />
+­    ­monitor.setBackgroundColor(32768)<br />
+­    ­monitor.setTextColor(1)<br />
 ­  end<br />
-­    monitor.write(string.char(byte))<br />
+­    ­monitor.write(string.char(byte))<br />
 end<br />
