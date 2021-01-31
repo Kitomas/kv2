@@ -1,0 +1,18 @@
+This is for reference purposes
+
+white=(240, 240, 240)		#01 white	0000	1
+orange=(242, 178, 51)		#02 orange	0001	2
+magenta=(229, 127, 216)		#03 magenta	0010	4
+lightblue=(153, 178, 242)	#04 lightblue	0011	8
+yellow=(222, 222, 108)		#05 yellow	0100	16
+lime=(127, 204, 25)		#06 lime	0101	32
+pink=(242, 178, 204)		#07 pink	0110	64
+gray=(76, 76, 76)		#08 gray	0111	128
+lightgray=(153, 153, 153)	#09 lightgray	1000	256
+cyan=(76, 153, 178)		#10 cyan	1001	512
+purple=(178, 102, 229)		#11 purple	1010	1024
+blue=(51, 102, 204)		#12 blue	1011	2048
+brown=(127, 102, 76)		#13 brown	1100	4096
+green=(87, 166, 78)		#14 green	1101	8192
+red=(204, 76, 76)		#15 red		1110	16384
+black=(25, 25, 25)		#16 black	1111	32768
