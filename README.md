@@ -2,18 +2,19 @@
 A program used to put images in videos into Computercraft, using a file format named ".kv2".<br />
 The converter is a python script that takes an mp4, a png, or a jpg and converts it into a kv2. 
 
-The structure of a kv2, including header, is detailed in the config.<br />
+The structure of a kv2, including header, is detailed below<br />
 This kv2 can then be played with the bundled player inside Computercraft.
 
+NOTE: versions >1.0 use an optimized player made for use with CCTweaked.
 
 the 60 byte header goes as:
 -----------------------------
-width and height of frame; 2 bytes<br />
+width and height of frame; 4 bytes;2 bytes for x&y<br />
 file type; 1 byte<br />
 is video?; 1 byte (0=false,1=true)<br />
-if video, what framerate?; 1 byte which represents a fixed-point number with a precision of a tenth (max is 20fps, but for demo purposes: 255=25.5fps)<br />
+if video, what frame delay in ticks?; 1 byte <br />
 amount of frames in file; 3 bytes<br />
-useless, but reserved for potential future use; 4 bytes<br />
+useless, but reserved for potential future use; 2 bytes<br />
 palette information for 16 colors; 3 bytes each (24 bit color) x 16 = 48 bytes (if type 1, then the interpreter should ignore colors 2-15)<br />
 begin imagestream, formatted as whatever type is included<br />
 

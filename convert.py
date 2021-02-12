@@ -34,6 +34,10 @@ if len(args) > 1: #name
     name=args[1]
 if len(args) > 3: #outputresolution
     outputresolution=(args[2],args[3])
+if outputresolution[0]>65535:
+    outputresolution=(65535,outputresolution[1])
+if outputresolution[1]>65535:
+    outputresolution=(outputresolution[0],65535)
 if len(args) > 4: #type
     type=args[4]
 if len(args) > 5: #dither
@@ -153,12 +157,12 @@ def bytestreamconvertsave(num):
                 ths=type1choice(tempimage,ix+1,iy+2,ths)
                 f.write(int('10'+ths,2).to_bytes(1, byteorder="big"))
                 ths=''
-def roundfpstonearesttick(fps):
-    newfps=(20/math.floor(((1/fps)/.05)+.5))
-    if newfps < 0.1:
-        newfps=0.1
-    elif newfps > 20:
-        newfps=20
+def roundfpstonearesttick(fps): #returns the exact delay in ticks, not fps
+    newfps=math.floor(((1/fps)/.05)+.5)
+    if newfps < 1:
+        newfps=1
+    elif newfps > 255:
+        newfps=255
     return newfps
 def cut(num):
     return math.floor(num*1000)/1000
@@ -167,14 +171,15 @@ def cullframes():# i know this is messy, but this is the way i came up with for 
     global outputfps
     global vidlen
     if outputfps != -1:
-        ratio=1-(roundfpstonearesttick(outputfps)/vidfps)
+        ratio=1-((1/(roundfpstonearesttick(outputfps)*.05))/vidfps)
         countera=0.0
-        target=math.ceil(roundfpstonearesttick(outputfps)*(vidlen/vidfps))
+        target=math.ceil((1/(roundfpstonearesttick(outputfps)*.05))*(vidlen/vidfps))
+        print(vidlen,target)
         if ratio <= .5:
             for i in range(vidlen):
                 print("Frame "+str(i+1)+"/"+str(vidlen)+" - Phase 4/5: Cull frames to fit custom fps")
                 countera=float(countera+ratio)
-                if (countera-int(countera-1)) > .9999:
+                if (countera-int(countera-1)) >= 1:
                     if os.path.exists("./tmp/ph2/frame"+str(i)+".png"):
                         os.system("rm ./tmp/ph2/frame"+str(i)+".png")
                     countera=float(countera-math.floor(countera))
@@ -184,7 +189,7 @@ def cullframes():# i know this is messy, but this is the way i came up with for 
             for i in range(vidlen):
                 print("Frame "+str(i+1)+"/"+str(vidlen)+" - Phase 4/5: Cull frames to fit custom fps")
                 countera=float(countera+ratio)
-                if not countera > .9999 and framecount > target:
+                if not countera >= 1 and framecount > target:
                     if os.path.exists("./tmp/ph2/frame"+str(i)+".png"):
                         os.system("rm ./tmp/ph2/frame"+str(i)+".png")
                         framecount -= 1
@@ -193,14 +198,22 @@ def cullframes():# i know this is messy, but this is the way i came up with for 
 print("-BEGIN-")
 testing=0
 #writing header into to file
-f.write(originaloutres[0].to_bytes(1, byteorder="big"))
-f.write(originaloutres[1].to_bytes(1, byteorder="big"))
+rxb="{0:b}".format(originaloutres[0])
+while len(rxb) < 16:
+    rxb="0"+rxb
+ryb="{0:b}".format(originaloutres[1])
+while len(ryb) < 16:
+    ryb="0"+ryb
+f.write(int(rxb[:8],2).to_bytes(1, byteorder="big"))
+f.write(int(rxb[8:16],2).to_bytes(1, byteorder="big"))
+f.write(int(ryb[:8],2).to_bytes(1, byteorder="big"))
+f.write(int(ryb[8:16],2).to_bytes(1, byteorder="big"))
 f.write(type.to_bytes(1, byteorder="big"))
 f.write(isvideo.to_bytes(1, byteorder="big"))
-newoutfps=math.floor(roundfpstonearesttick(outputfps)*10)#makes the desired fps a fixed point number
-f.write(int(newoutfps).to_bytes(1, byteorder="big"))
+newoutfps=roundfpstonearesttick(outputfps)
+f.write(int(newoutfps).to_bytes(1, byteorder="big"))#written as exact delay in ticks
 if isvideo==1:
-    nvidlen=math.ceil(roundfpstonearesttick(outputfps)*(vidlen/vidfps))
+    nvidlen=math.ceil((1/(roundfpstonearesttick(outputfps)*.05))*(vidlen/vidfps))
 else:
     nvidlen=1
 if nvidlen > ((2**24)-1):
@@ -211,7 +224,7 @@ while len(vlb) < 24:
 f.write(int(vlb[:8],2).to_bytes(1, byteorder="big"))
 f.write(int(vlb[8:16],2).to_bytes(1, byteorder="big"))
 f.write(int(vlb[16:24],2).to_bytes(1, byteorder="big"))
-for i in range(4):
+for i in range(2):
     f.write((0).to_bytes(1, byteorder="big"))
 for i in range(48):
     f.write(PALETTE[i].to_bytes(1, byteorder="big"))
